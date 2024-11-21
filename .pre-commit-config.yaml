@@ -1,0 +1,27 @@
+fail_fast: true
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.7.4
+    hooks:
+      - id: ruff
+        args: [src, scripts, tests]
+      - id: ruff-format
+        args: [src, scripts, tests, --check]
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+  - repo: https://github.com/pdm-project/pdm
+    rev: 2.20.1
+    hooks:
+      - id: pdm-export
+        args: [-o, requirements.txt, --without-hashes, --prod]
+        files: ^pdm.lock$
+      - id: pdm-lock-check
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.96.2
+    hooks:
+      - id: terraform_fmt
+        args: [--args=-write=false]
+      - id: terraform_validate

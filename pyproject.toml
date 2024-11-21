@@ -1,0 +1,46 @@
+[project]
+name = "marathon_gear"
+version = "0.0.1"
+description = ""
+authors = [
+    {name = "Kaden"},
+]
+dependencies = [
+    "aws-lambda-typing>=2.20.0",
+    "selenium>=4.26.1",
+    "dataclasses-json>=0.6.7",
+    "Jinja2>=3.1.4",
+]
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.mypy]
+packages = ["marathon_gear", "tests"]
+no_namespace_packages = true
+
+[tool.ruff]
+indent-width = 2
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "COM812"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+env = []
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "mypy>=1.7.0",
+    "ruff>=0.1.6",
+    "boto3>=1.29.4",
+    "boto3-stubs[dynamodb]>=1.29.5",
+]
+test = [
+    "pytest>=7.4.3",
+    "pytest-env>=1.1.1",
+    "pytest-mock>=3.12.0",
+]
+
+
+

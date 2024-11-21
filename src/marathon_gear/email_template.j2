@@ -1,0 +1,28 @@
+<html>
+  <h1>Marathon gear updates</h1>
+  <p>There are new updates for the <a href="{{url}}">marathon gear</a></p>
+  {% if new_products|length > 0 %}
+  <h2>New products</h2>
+  <ul style="padding-left: 0;">
+  {% for product in new_products %}
+  <li style="list-style: none; margin-left: 0;">
+    <a href="{{product.url}}">{{product.name}}</a>
+    <p>${{product.price}}</p>
+    <img src="{{product.image}}?wid=200&hei=200" />
+  </li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+  {% if new_products|length > 0 %}
+  <h2>Price droped</h2>
+  <ul style="padding-left: 0;">
+  {% for product in products %}
+  <li style="list-style: none; margin-left: 0;">
+    <a href="{{product.url}}">{{product.name}}</a>
+    <p>${{product.price}}</p>
+    <img src="{{product.image}}?wid=200&hei=200" />
+  </li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+</html>
