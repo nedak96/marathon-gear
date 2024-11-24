@@ -34,7 +34,7 @@ resource "aws_cloudwatch_log_group" "marathon_gear_lambda_logs" {
 resource "aws_cloudwatch_event_rule" "marathon_gear_rule" {
   name                = "marathon-gear-rule"
   description         = "Fires every minute"
-  schedule_expression = "rate(1 minute)"
+  schedule_expression = "rate(30 minutes)"
 }
 
 resource "aws_cloudwatch_event_target" "marathon_gear_every_minute" {

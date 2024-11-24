@@ -1,6 +1,7 @@
 import logging
 from email.mime.text import MIMEText
 from os import path
+from uuid import uuid4
 
 from aws_lambda_typing import context as context_
 from aws_lambda_typing import events
@@ -38,7 +39,7 @@ def handler(_: events.EventBridgeEvent, context: context_.Context) -> None:
   for p in products:
     if p.url not in existing_products:
       new_products.append(p)
-    elif p.price < existing_products[p.url]:
+    elif p.price < existing_products[p.url].price:
       price_drop_products.append(p)
 
   logger.info(
@@ -62,6 +63,7 @@ def handler(_: events.EventBridgeEvent, context: context_.Context) -> None:
       msg["Subject"] = "Marathon gear updates"
       msg["From"] = "Marathon Gear Watcher"
       msg["To"] = ", ".join(RECIPIENTS)
+      msg["References"] = f"<{uuid4()}@gmail.com>"
       email_cli.send_email(RECIPIENTS, msg.as_string())
 
   store_info.update(products)
