@@ -1,5 +1,6 @@
 import logging
 from email.mime.text import MIMEText
+from os import path
 
 from aws_lambda_typing import context as context_
 from aws_lambda_typing import events
@@ -25,22 +26,29 @@ def handler(_: events.EventBridgeEvent, context: context_.Context) -> None:
 
   with Scrape() as scraper:
     products = scraper.get_products(NEW_BALANCE_URL)
+  logger.info("Got products: %d", len(products))
 
   store_info = StoreInfo(NEW_BALANCE_KEY)
 
   new_products: list[StoreInfoProduct] = []
   price_drop_products: list[StoreInfoProduct] = []
 
-  existing_products = {p.name: p for p in store_info.products}
+  existing_products = {p.url: p for p in store_info.products}
 
   for p in products:
-    if p.name not in existing_products:
+    if p.url not in existing_products:
       new_products.append(p)
-    elif p.price < existing_products[p.name]:
+    elif p.price < existing_products[p.url]:
       price_drop_products.append(p)
 
+  logger.info(
+    "Product updates - new products: %d - price dropped: %s",
+    len(new_products),
+    len(price_drop_products),
+  )
+
   if len(new_products) + len(price_drop_products) > 0:
-    with open("./email_template.j2") as f:
+    with open(path.join(path.dirname(__file__), "./email_template.j2")) as f:
       email_template = Template(f.read())
       email_cli = Email(GMAIL_ADDRESS, GMAIL_PASSWORD)
       msg = MIMEText(
@@ -54,11 +62,6 @@ def handler(_: events.EventBridgeEvent, context: context_.Context) -> None:
       msg["Subject"] = "Marathon gear updates"
       msg["From"] = "Marathon Gear Watcher"
       msg["To"] = ", ".join(RECIPIENTS)
-      email_cli.send_email(
-        RECIPIENTS,
-        email_template.render(
-          link=NEW_BALANCE_URL,
-        ),
-      )
+      email_cli.send_email(RECIPIENTS, msg.as_string())
 
   store_info.update(products)

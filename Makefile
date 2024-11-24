@@ -11,13 +11,13 @@ tf-apply:
 
 format:
 	@terraform -chdir=terraform fmt
-	@ruff format src scripts tests
-	@ruff check src scripts tests --fix
+	@ruff format src tests
+	@ruff check src tests --fix
 
 check:
 	@mypy
-	@ruff check src scripts tests
-	@ruff format src scripts tests --check
+	@ruff check src tests
+	@ruff format src tests --check
 
 requirements-export:
 	pdm export -o requirements.txt -f requirements --without-hashes --prod

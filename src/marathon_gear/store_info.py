@@ -1,5 +1,6 @@
 import logging
 from dataclasses import dataclass
+from decimal import Decimal
 from typing import TYPE_CHECKING, Any, cast
 
 import boto3
@@ -20,7 +21,7 @@ logger.setLevel(logging.INFO)
 @dataclass
 class StoreInfoProduct(DataClassJsonMixin):
   name: str
-  price: float
+  price: Decimal
   url: str
   image: str
 
@@ -61,7 +62,6 @@ class StoreInfo:
     logger.info("Updating record: %s", self.__dynamorecord.store)
     try:
       self.__dynamorecord.products = products
-
       self.__table.put_item(Item=cast(dict[str, Any], self.__dynamorecord.to_dict()))
     except Exception as e:
       logger.error("Error updating record")

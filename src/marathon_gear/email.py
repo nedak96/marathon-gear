@@ -19,16 +19,13 @@ class Email:
     self.__password = password
 
   def send_email(self, recipients: list[str], text: str) -> None:
+    logger.info("Sending email %s", recipients)
     try:
       with smtplib.SMTP_SSL(
         GMAIL_SERVER,
         port=GMAIL_SERVER_PORT,
       ) as server:
         server.login(self.__username, self.__password)
-        # msg = MIMEText()
-        # msg["Subject"] = ""
-        # msg["From"] = ""
-        # msg[]
         server.sendmail(
           self.__username,
           recipients,

@@ -4,37 +4,30 @@ locals {
   runtime          = "python3.11"
 }
 
-data "archive_file" "source_code_zip" {
-  type        = "zip"
-  source_dir  = "${path.module}/../src"
-  output_path = "${path.module}/files/marathon-gear.zip"
-}
-
 resource "aws_lambda_function" "marathon_gear" {
-  filename         = data.archive_file.source_code_zip.output_path
+  depends_on = [
+    docker_registry_image.marathon_gear_image,
+    aws_cloudwatch_log_group.marathon_gear_lambda_logs,
+  ]
   function_name    = local.function_name
   role             = aws_iam_role.marathon_gear_role.arn
-  handler          = "marathon_gear.handler"
-  runtime          = local.runtime
-  timeout          = 60
-  source_code_hash = data.archive_file.source_code_zip.output_base64sha256
-  layers           = [
-    aws_lambda_layer_version.python_dependencies_lambda_layer.arn,
-    aws_lambda_layer_version.chromium_dependencies_lambda_layer.arn,
-  ]
+  image_uri        = docker_registry_image.marathon_gear_image.name
+  source_code_hash = docker_registry_image.marathon_gear_image.sha256_digest
+  memory_size      = 1024
+  package_type     = "Image"
+  timeout          = 300
   environment {
     variables = {
       STORE_INFO_TABLE = aws_dynamodb_table.marathon_gear_store_info.name
-      GMAIL_ADDRESS         = var.gmail_address
-      GMAIL_PASSWORD          = var.gmail_password
-      RECIPIENTS          = join(",", var.recipients)
-      SE_AVOID_STATS     = "true"
+      GMAIL_ADDRESS    = var.gmail_address
+      GMAIL_PASSWORD   = var.gmail_password
+      RECIPIENTS       = join(",", var.recipients)
     }
   }
 }
 
 resource "aws_cloudwatch_log_group" "marathon_gear_lambda_logs" {
-  name              = "/aws/lambda/${aws_lambda_function.marathon_gear.function_name}"
+  name              = "/aws/lambda/${local.function_name}"
   retention_in_days = 3
 }
 

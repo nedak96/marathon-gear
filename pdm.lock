@@ -5,10 +5,10 @@
 groups = ["default", "dev", "test"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:17bd2f4f2242156fc9c36beca56993baddc651501ac5eb62ab6d8c19a1bdf6c7"
+content_hash = "sha256:597d8afc57d163663ad35217bba93217ff1342ceead1b4d17f439e34bcd390df"
 
 [[metadata.targets]]
-requires_python = ">=3.11"
+requires_python = ">=3.12"
 
 [[package]]
 name = "attrs"

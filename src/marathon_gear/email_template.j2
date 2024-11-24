@@ -13,10 +13,10 @@
   {% endfor %}
   </ul>
   {% endif %}
-  {% if new_products|length > 0 %}
-  <h2>Price droped</h2>
+  {% if price_drop_products|length > 0 %}
+  <h2>Price dropped</h2>
   <ul style="padding-left: 0;">
-  {% for product in products %}
+  {% for product in price_drop_products %}
   <li style="list-style: none; margin-left: 0;">
     <a href="{{product.url}}">{{product.name}}</a>
     <p>${{product.price}}</p>
